@@ -24,9 +24,16 @@
     "@angular/platform-browser": "^6.1.0",
     "@angular/platform-browser-dynamic": "^6.1.0",
     "@angular/router": "^6.1.0",
+    "angular-6-social-login": "^1.1.1",
+    "bitfinex-api": "^0.2.3",
     "core-js": "^2.5.4",
+    "express": "^4.16.3",
     "jqwidgets-scripts": "^6.0.6",
+    "queueing-subject": "^0.3.0",
     "rxjs": "^6.0.0",
+    "rxjs-websockets": "^6.0.2",
+    "socket.io": "^2.1.1",
+    "ws": "^6.0.0",
     "zone.js": "~0.8.26"
   },
   "devDependencies": {

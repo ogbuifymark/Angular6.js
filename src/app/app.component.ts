@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { jqxBarGaugeComponent } from 'jqwidgets-scripts/jqwidgets-ts/angular_jqxbargauge';
 
 
 
