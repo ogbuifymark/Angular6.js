@@ -5,19 +5,19 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { SigninComponent } from './signin/signin.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { GuardComponent } from './guard/guard.component';
+import { AuthGuard } from './auth.guard';
 
 const routes: Routes = [
+  // {
+  //   path: '', component: DashboardComponent, pathMatch: 'full', canActivate: [AuthGuard]
+  // },
   {
-    path: '', component: DashboardComponent, pathMatch: 'full', canActivate: [GuardComponent]
-  },
-  {
-    path: 'dashboard',
-    component: DashboardComponent, canActivate: [GuardComponent]
+    path: '',
+    component: DashboardComponent,
   },
   {
     path: 'users',
-    component: UsersComponent, canActivate: [GuardComponent]
+    component: UsersComponent, canActivate: [AuthGuard]
   },
   {
     path: 'login', component: SigninComponent
@@ -26,7 +26,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [
-    BrowserModule, BrowserAnimationsModule, GuardComponent,
+    BrowserModule, BrowserAnimationsModule,
     // MatButtonModule, MatCardModule, MatInputModule, MatSnackBarModule, MatToolbarModule,
     RouterModule.forRoot(routes)],
   exports: [RouterModule]

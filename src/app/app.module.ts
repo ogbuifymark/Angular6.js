@@ -15,26 +15,27 @@ import { GraphComponent } from './graph/graph.component';
 import { SigninComponent } from './signin/signin.component';
 import { SocialLoginModule,  AuthServiceConfig,  GoogleLoginProvider,  FacebookLoginProvider} from 'angular-6-social-login';
 import { LinkedinLoginProvider } from 'angular-6-social-login';
-import { GuardComponent } from './guard/guard.component';
+import { AuthGuard } from './auth.guard';
 import { FormsModule } from '@angular/forms';
 import { AuthenticationService } from './_service/Authentication.Service';
+
 
 
 export function getAuthServiceConfigs() {
   const config = new AuthServiceConfig(
       [
-        {
-          id: FacebookLoginProvider.PROVIDER_ID,
-          provider: new FacebookLoginProvider('Your-Facebook-app-id')
-        },
+        // {
+        //   id: FacebookLoginProvider.PROVIDER_ID,
+        //   provider: new FacebookLoginProvider('Your-Facebook-app-id')
+        // },
         {
           id: GoogleLoginProvider.PROVIDER_ID,
-          provider: new GoogleLoginProvider('657825322723-3c79f9qigc8p5n8uv6n9q1ps58tr0s7l.apps.googleusercontent.com')
+          provider: new GoogleLoginProvider('657825322723-6tlfvpomg132hl43p08s5sidi129ufub.apps.googleusercontent.com')
         },
-          {
-            id: LinkedinLoginProvider.PROVIDER_ID,
-            provider: new LinkedinLoginProvider('1098828800522-m2ig6bieilc3tpqvmlcpdvrpvn86q4ks.apps.googleusercontent.com')
-          },
+          // {
+          //   id: LinkedinLoginProvider.PROVIDER_ID,
+          //   provider: new LinkedinLoginProvider('1098828800522-m2ig6bieilc3tpqvmlcpdvrpvn86q4ks.apps.googleusercontent.com')
+          // },
       ]
   );
   return config;
@@ -49,7 +50,6 @@ export function getAuthServiceConfigs() {
     jqxChartComponent,
     GraphComponent,
     SigninComponent,
-
   ],
   imports: [
     SocialLoginModule,
@@ -59,9 +59,10 @@ export function getAuthServiceConfigs() {
     HttpClientModule,
     HttpModule,
     BrowserAnimationsModule,
+    // GuardComponent,
   ],
   providers: [
-    GuardComponent,
+    AuthGuard,
     AuthenticationService,
     {
       provide: AuthServiceConfig,
