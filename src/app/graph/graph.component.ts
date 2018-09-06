@@ -70,16 +70,13 @@ export class GraphComponent implements OnInit {
 
         const messagesSubscription = messages.subscribe((message: string) => {
             this.sockets = JSON.parse(message);
-            console.log(this.sockets);
             if (data.length >= 60) {
                         data.splice(0, 1);
                     }
             if (this.sockets instanceof Array) {
                 if (this.sockets[1].length > 6) {
-                    console.log(this.sockets[1]);
                     // tslint:disable-next-line:forin
                     for (const socket in this.sockets[1]) {
-                        console.log(this.sockets[1][socket][0]);
                         const jsondata = {
                             timestamp: new Date(this.sockets[1][socket][0]).setMilliseconds(0),
                             // open: this.sockets[1][socket][1],
@@ -88,8 +85,11 @@ export class GraphComponent implements OnInit {
                             // value: this.sockets[1][socket][2],
                             value: this.sockets[1][socket][5]
                         };
-                        data.push(jsondata);
-                        this.myChart.update();
+                        if (jsondata.timestamp != null) {
+                            data.push(jsondata);
+                            this.myChart.update();
+                        }
+
                         // this.tickers$ = data;
                         // localStorage.setItem('chartdata', JSON.stringify(data));
                         this.mysource.postTickers(jsondata);
@@ -103,7 +103,10 @@ export class GraphComponent implements OnInit {
                         // value: this.sockets[1][2],
                         value: this.sockets[1][5]
                     };
-                    data.push(jsondata);
+                    if (jsondata.timestamp != null) {
+                        data.push(jsondata);
+                        this.myChart.update();
+                    }
                     // localStorage.setItem('chartdata', JSON.stringify(data));
                     this.mysource.postTickers(jsondata);
                     this.myChart.update();
@@ -136,11 +139,11 @@ export class GraphComponent implements OnInit {
         dataField: 'timestamp',
         type: 'date',
         baseUnit: 'second',
-        unitInterval: 5,
+            // unitInterval: 1,
         formatFunction: (value: any) => {
             return jqx.dataFormat.formatdate(value, 'hh:mm:ss', 'en-us');
         },
-        gridLines: { step: 10 },
+        gridLines: { interval: 2 },
         valuesOnTicks: true,
         labels: { offset: { x: -17, y: 0 } }
     };
@@ -204,13 +207,18 @@ export class GraphComponent implements OnInit {
             (savedDatas: BitfinexCandles) => {
                 // tslint:disable-next-line:forin
                 for (const savedData in savedDatas) {
+                    if (savedDatas[savedData].timestamp != null) {
+                        this.data.push(savedDatas[savedData]);
+                    }
                     // if (Object.keys(savedDatas[savedData]).length > 6) {
-                this.data.push(savedDatas[savedData]);
+
+                console.log('data  ', savedDatas[savedData]);
                     // }
                 }
-                console.log('data  ', this.data);
-                this.data = this.data.reverse();
+
             });
+            console.log('data  ', this.data);
+            this.data = this.data.reverse();
     }
   // tslint:disable-next-line:member-ordering
 
