@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit , AfterViewInit} from '@angular/core';
 import { DataService } from '../data.service';
 import { XhrFactory } from '@angular/common/http/src/xhr';
 // import { error } from '@angular/compiler/src/util';
@@ -8,6 +8,8 @@ import { Subscription } from 'rxjs/';
 import { QueueingSubject } from 'queueing-subject';
 import websocketConnect from 'rxjs-websockets';
 import { ViewChild } from '@angular/core';
+import { BitfinexCandles } from '../shared/interfaces';
+
 // import { Socket } from 'dgram';
 
 
@@ -34,10 +36,11 @@ export class GraphComponent implements OnInit {
     constructor(private mysource: DataService) { }
     ngOnInit(): void {
         // let payload = msg;
+        console.log('hey');
         this.generateChartData();
     }
 
-  getWidth(): any {
+    getWidth(): any {
     if (document.body.offsetWidth < 850) {
         return '90%';
     }
@@ -47,6 +50,17 @@ export class GraphComponent implements OnInit {
     // tslint:disable-next-line:use-life-cycle-interface
     ngAfterViewInit(): void {
         const data = this.myChart.source();
+        // const timer = setInterval(() => {
+        //     const max = 800;
+        //     if (data.length >= 60) {
+        //         data.splice(0, 1);
+        //     }
+        //     const timestamp = new Date();
+        //     timestamp.setSeconds(timestamp.getSeconds());
+        //     timestamp.setMilliseconds(0);
+        //     data.push({ timestamp: timestamp, value: Math.max(100, (Math.random() * 1000) % max) });
+        //     this.myChart.update();
+        // }, 1000);
         const { messages, connectionStatus } = websocketConnect('wss://api.bitfinex.com/ws/2', input);
         input.next(msg);
 
@@ -57,63 +71,59 @@ export class GraphComponent implements OnInit {
         const messagesSubscription = messages.subscribe((message: string) => {
             this.sockets = JSON.parse(message);
             console.log(this.sockets);
+            if (data.length >= 60) {
+                        data.splice(0, 1);
+                    }
             if (this.sockets instanceof Array) {
                 if (this.sockets[1].length > 6) {
+                    console.log(this.sockets[1]);
                     // tslint:disable-next-line:forin
                     for (const socket in this.sockets[1]) {
-                        data.push({
-                            date: new Date(socket[0]),
-                            open: socket[1],
-                            high: socket[3],
-                            low: socket[4],
-                            close: socket[2],
-                            volume: socket[5]
-                        });
-                        localStorage.setItem('chartdata', data.push({
-                            date: new Date(socket[0]),
-                            open: socket[1],
-                            high: socket[3],
-                            low: socket[4],
-                            close: socket[2],
-                            volume: socket[5]
-                        }));
+                        console.log(this.sockets[1][socket][0]);
+                        const jsondata = {
+                            timestamp: new Date(this.sockets[1][socket][0]).setMilliseconds(0),
+                            // open: this.sockets[1][socket][1],
+                            // high: this.sockets[1][socket][3],
+                            // low: this.sockets[1][socket][4],
+                            // value: this.sockets[1][socket][2],
+                            value: this.sockets[1][socket][5]
+                        };
+                        data.push(jsondata);
+                        this.myChart.update();
+                        // this.tickers$ = data;
+                        // localStorage.setItem('chartdata', JSON.stringify(data));
+                        this.mysource.postTickers(jsondata);
                     }
-                    this.myChart.update();
                   } else {
-                    data.push({
-                        date: new Date(this.sockets[0]),
-                        open: this.sockets[1],
-                        high: this.sockets[3],
-                        low: this.sockets[4],
-                        close: this.sockets[2],
-                        volume: this.sockets[5]
-                    });
-                    localStorage.setItem('chartdata', data.push({
-                        date: new Date(this.sockets[0]),
-                        open: this.sockets[1],
-                        high: this.sockets[3],
-                        low: this.sockets[4],
-                        close: this.sockets[2],
-                        volume: this.sockets[5]
-                    }));
+                    const jsondata = {
+                        timestamp: new Date(this.sockets[1][0]).setMilliseconds(0),
+                        // open: this.sockets[1][1],
+                        // high: this.sockets[1][3],
+                        // low: this.sockets[1][4],
+                        // value: this.sockets[1][2],
+                        value: this.sockets[1][5]
+                    };
+                    data.push(jsondata);
+                    // localStorage.setItem('chartdata', JSON.stringify(data));
+                    this.mysource.postTickers(jsondata);
+                    this.myChart.update();
                   }
             }
         });
     }
 
-    toolTipCustomFormatFn = (value: any, itemIndex: any, serie: any, group: any, categoryValue: any, categoryAxis: any) => {
-        const data = JSON.parse(localStorage.getItem('chartdata'));
-        const dataItem = data.records[itemIndex];
-        const volume = dataItem.volume;
-        return '<DIV style="text-align:left"><b>Date: ' +
-            categoryValue.getDate() + '-' + this.months[categoryValue.getMonth()] + '-' + categoryValue.getFullYear() +
-            '</b><br />Open price: $' + value.open +
-            '</b><br />Close price: $' + value.close +
-            '</b><br />Low price: $' + value.low +
-            '</b><br />High price: $' + value.high +
-            '</b><br />Daily volume: ' + volume +
-        '</DIV>';
-    }
+    // toolTipCustomFormatFn = (value: any, itemIndex: any, serie: any, group: any, categoryValue: any, categoryAxis: any) => {
+    //     const dataItem = data.records[itemIndex];
+    //     const volume = dataItem.volume;
+    //     return '<DIV style="text-align:left"><b>Date: ' +
+    //         categoryValue.getDate() + '-' + this.months[categoryValue.getMonth()] + '-' + categoryValue.getFullYear() +
+    //         '</b><br />Open price: $' + value.open +
+    //         '</b><br />Close price: $' + value.close +
+    //         '</b><br />Low price: $' + value.low +
+    //         '</b><br />High price: $' + value.high +
+    //         '</b><br />Daily volume: ' + volume +
+    //     '</DIV>';
+    // }
     // tslint:disable-next-line:member-ordering
     data: any[] = [];
     // tslint:disable-next-line:member-ordering
@@ -123,30 +133,16 @@ export class GraphComponent implements OnInit {
     // tslint:disable-next-line:member-ordering
     xAxis: any =
     {
-        dataField: 'Date',
-        labels: {
-            formatFunction: (value) => {
-                return value.getDate() + '-' + this.months[value.getMonth()] + '\'' + value.getFullYear().toString().substring(2);
-            }
-        },
+        dataField: 'timestamp',
         type: 'date',
+        baseUnit: 'second',
+        unitInterval: 5,
+        formatFunction: (value: any) => {
+            return jqx.dataFormat.formatdate(value, 'hh:mm:ss', 'en-us');
+        },
+        gridLines: { step: 10 },
         valuesOnTicks: true,
-        minValue: new Date(2014, 1, 1),
-        maxValue: new Date(2014, 10, 1),
-        rangeSelector: {
-            padding: { left: 25, right: 10, top: 10, bottom: 10 },
-            backgroundColor: 'white',
-            dataField: 'close',
-            baseUnit: 'month',
-            serieType: 'area',
-            gridLines: { visible: false },
-            labels:
-            {
-                formatFunction: (value: any) => {
-                    return this.months[value.getMonth()] + '\'' + value.getFullYear().toString().substring(2);
-                }
-            }
-        }
+        labels: { offset: { x: -17, y: 0 } }
     };
     // tslint:disable-next-line:member-ordering
     valueAxis: any =
@@ -160,47 +156,18 @@ export class GraphComponent implements OnInit {
     seriesGroups: any[] =
     [
         {
-            type: 'candlestick',
-            columnsMaxWidth: 15,
-            columnsMinWidth: 5,
-            toolTipFormatFunction: this.toolTipCustomFormatFn,
-            valueAxis:
-            {
-                description: 'S&P 500<br>'
-            },
-            series: [
-                {
-                    dataFieldClose: 'close',
-                    displayTextClose: 'Close price',
-                    dataFieldOpen: 'open',
-                    displayTextOpen: 'Open price',
-                    dataFieldHigh: 'high',
-                    displayTextHigh: 'High price',
-                    dataFieldLow: 'low',
-                    displayTextLow: 'Low price',
-                    lineWidth: 1
-                }
-            ]
-        },
-        {
             type: 'line',
+            columnsGapPercent: 50,
+            alignEndPointsWithIntervals: true,
             valueAxis:
             {
-                position: 'right',
-                title: { text: '<br>Daily Volume' },
-                gridLines: { visible: false },
-                labels: {
-                    formatFunction: (value: string) => {
-                        return (+(value) / 1000000) + 'M';
-                    }
-                }
+                minValue: 0,
+                maxValue: 1000,
+                title: { text: 'Index Value' }
             },
             series: [
-                {
-                    dataField: 'volume',
-                    displayText: 'Volume',
-                    lineWidth: 1
-                }
+                // tslint:disable-next-line:max-line-length
+                { dataField: 'value', displayText: 'value', opacity: 1, lineWidth: 2, symbolType: 'circle', fillColorSymbolSelected: 'white', symbolSize: 4 }
             ]
         }
     ];
@@ -223,11 +190,27 @@ export class GraphComponent implements OnInit {
         }
     }
     generateChartData = () => {
-        this.data = JSON.parse(localStorage.getItem('chartdata'));
-        console.log('data  ', this.data);
-        if (this.data != null) {
-            this.data = this.data.reverse();
-        }
+        // const max = 800;
+        // const timestamp = new Date();
+        // for (let i = 0; i < 60; i++) {
+        //     timestamp.setMilliseconds(0);
+        //     timestamp.setSeconds(timestamp.getSeconds() - 1);
+        //     this.data.push({ timestamp: new Date(timestamp.valueOf()), value: Math.max(100, (Math.random() * 1000) % max) });
+        // }
+        // console.log('data  ', this.data);
+        // this.data = this.data.reverse();
+        // localStorage.setItem('chartdata', null);
+        this.mysource.getTickers().subscribe(
+            (savedDatas: BitfinexCandles) => {
+                // tslint:disable-next-line:forin
+                for (const savedData in savedDatas) {
+                    // if (Object.keys(savedDatas[savedData]).length > 6) {
+                this.data.push(savedDatas[savedData]);
+                    // }
+                }
+                console.log('data  ', this.data);
+                this.data = this.data.reverse();
+            });
     }
   // tslint:disable-next-line:member-ordering
 

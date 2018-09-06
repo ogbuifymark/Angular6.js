@@ -8,12 +8,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AuthGuard } from './auth.guard';
 
 const routes: Routes = [
-  // {
-  //   path: '', component: DashboardComponent, pathMatch: 'full', canActivate: [AuthGuard]
-  // },
   {
-    path: '',
-    component: DashboardComponent,
+    path: '', component: DashboardComponent, pathMatch: 'full', canActivate: [AuthGuard]
+  },
+  {
+    path: 'dashboard',
+    component: DashboardComponent, canActivate: [AuthGuard]
   },
   {
     path: 'users',

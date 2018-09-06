@@ -18,23 +18,23 @@ import { map, take } from 'rxjs/operators';
 })
 
 
-
 export class DataService {
+uri = 'http://localhost:4000/bitfinexRoutes';
+
   socket: Socket;
   observer: Observer<Object>;
     constructor(private http: HttpClient) {}
   getTickers() {
-    return this.http.get('https://api.bitfinex.com/v2/tickers?symbols=ALL');
+    const check = this.http.get(this.uri);
+    console.log('pulled data', check);
+    return check;
   }
 
 
-  private handleError(error) {
-    console.error('server error:', error);
-    if (error.error instanceof Error) {
-        const errMessage = error.error.message;
-        return Observable.throw(errMessage);
-    }
-    return Observable.throw(error || 'Socket.io server error');
+  postTickers(tickers) {
+    console.log('tickers check', tickers);
+    return this.http.post(this.uri + '/add', tickers)
+    .subscribe(res => console.log('Done'));
   }
 
   getPosts() {

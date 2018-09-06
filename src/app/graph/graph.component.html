@@ -1,8 +1,28 @@
 <jqxChart #myChart
 [width]="getWidth()" [height]="500"
-[title]="'S&P 500 Candlestick Chart'" 
-[description]="'(June 2010 - November 2014)'"
-[enableAnimations]="true" [enableCrosshairs]="true" [animationDuration]="1500"
-[source]="dataAdapter" [xAxis]="xAxis"
-[seriesGroups]="seriesGroups" [colorScheme]="'scheme17'"  [padding]="padding" >
+[title]="'Live updates demo'" [enableAxisTextAnimation]="true"
+[description]="''" [animationDuration]="1000"
+[showLegend]="true" [enableAnimations]="false" [padding]="padding"
+[titlePadding]="titlePadding" [source]="data" [xAxis]="xAxis"
+[valueAxis]="valueAxis" [seriesGroups]="seriesGroups" [colorScheme]="'scheme03'">
 </jqxChart>
+    <!-- <table style="width: 680px">
+    <tbody>
+        <tr>
+            <td style="padding-left: 50px">
+                <p>Select the series type:</p>
+                <jqxDropDownList (onChange)="seriesOnChange($event)"
+                    [width]="200" [height]="25" [selectedIndex]="2"
+                    [dropDownHeight]="100" [source]="seriesList">
+                </jqxDropDownList>
+            </td>
+            <td>
+                <p>Select color scheme:</p>
+                <jqxDropDownList (onChange)="colorsOnChange($event)"
+                    [width]="200" [height]="25" [selectedIndex]="2"
+                    [dropDownHeight]="100" [source]="colorsSchemesList">
+                </jqxDropDownList>
+            </td>
+        </tr>
+    </tbody>
+    </table> -->
