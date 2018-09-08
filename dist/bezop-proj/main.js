@@ -655,7 +655,7 @@ var GraphComponent = /** @class */ (function () {
                 if (_this.data.length >= 60) {
                     _this.data.splice(0, 1);
                 }
-                alert('data' + _this.data.length);
+                // alert('data' + this.data.length);
                 _this.data = _this.data.reverse();
             });
         };

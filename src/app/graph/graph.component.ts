@@ -232,7 +232,7 @@ export class GraphComponent implements OnInit {
                 if (this.data.length >= 60) {
                     this.data.splice(0, 1);
                 }
-                alert('data' + this.data.length);
+                // alert('data' + this.data.length);
                 this.data = this.data.reverse();
             });
     }
