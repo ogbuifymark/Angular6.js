@@ -2,7 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const bitfinexRoutes = require('./src/app/server-app/routes/bitfinex.routes');
 const cors = require('cors');
-
+const http = require('http');
+const path = require('path')
 
 // create express app
 const app = express();
@@ -35,11 +36,19 @@ app.use('/bitfinexRoutes', bitfinexRoutes);
 //     res.json({"message": "Welcome to EasyNotes application. Take notes quickly. Organize and keep track of all your notes."});
 // });
 
+
+//deploying app
+app.use(express.static(path.join(__dirname + 'dist/bezop-proj')))
+app.get('*', (req, res)=> {
+    res.sendFile(path.join(__dirname, 'dist/bezop-proj/index.html'))
+})
+const port = process.env.PORT || '4000'
+app.set('port', port)
 // listen for requests
 app.listen(4000, () => {
-    console.log("Server is listening on port 4000");
+    console.log("Running...");
 });
-
+const server = http.createServer(app);
 
 
 

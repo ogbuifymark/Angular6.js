@@ -4,10 +4,10 @@ export interface Socket {
   }
 export interface BitfinexCandles {
     id: Number;
-    date: String;
-    open: String;
-    high: String;
-    low: String;
-    close: String;
+    timestamp: String;
+    // open: String;
+    // high: String;
+    // low: String;
+    // close: String;
     volume: String;
 }

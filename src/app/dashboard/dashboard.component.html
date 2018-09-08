@@ -1,12 +1,19 @@
 <!-- <h1>Symbols</h1> -->
-<app-graph></app-graph>
-<!-- <ul [@listStagger]="tickers$">
-  <li *ngFor="let ticker of tickers$"> -->
-    <!-- <a routerLink="/details/{{user.id}}">{{ user.name }}</a> -->
+<div class="row"><div class="col-md-12">
+  <p>network indicator</p>
+  <i class="material-icons md-32" [style.color]="color">fiber_manual_record</i> {{colour$}}
+</div></div>
+<div class="row">
+  <div class="col-md-12">
+    <div class="col-md-8">
+        <app-graph></app-graph>
+    </div>
+    <div class="col-md-4">
 
-    <!-- <ul>
-      <li>{{ ticker[0] }}</li> -->
-      <!-- <li><a href="http://{{ ticker.website }}">{{ ticker.website }}</a></li> -->
-    <!-- </ul>
-  </li>
-</ul> -->
+    </div>
+     
+  </div>
+  
+</div>
+
+

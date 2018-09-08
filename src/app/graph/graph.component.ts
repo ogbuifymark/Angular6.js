@@ -9,6 +9,7 @@ import { QueueingSubject } from 'queueing-subject';
 import websocketConnect from 'rxjs-websockets';
 import { ViewChild } from '@angular/core';
 import { BitfinexCandles } from '../shared/interfaces';
+import { error } from 'selenium-webdriver';
 
 // import { Socket } from 'dgram';
 
@@ -41,10 +42,10 @@ export class GraphComponent implements OnInit {
     }
 
     getWidth(): any {
-    if (document.body.offsetWidth < 850) {
-        return '90%';
+    if (document.body.offsetWidth < 1250) {
+        return '100%';
     }
-    return 850;
+    return 1000;
     }
 
     // tslint:disable-next-line:use-life-cycle-interface
@@ -59,13 +60,15 @@ export class GraphComponent implements OnInit {
         //     timestamp.setSeconds(timestamp.getSeconds());
         //     timestamp.setMilliseconds(0);
         //     data.push({ timestamp: timestamp, value: Math.max(100, (Math.random() * 1000) % max) });
+        //     alert(JSON.stringify({ timestamp: timestamp, value: Math.max(100, (Math.random() * 1000) % max) });
         //     this.myChart.update();
+
         // }, 1000);
         const { messages, connectionStatus } = websocketConnect('wss://api.bitfinex.com/ws/2', input);
         input.next(msg);
 
         const connectionStatusSubscription = connectionStatus.subscribe(numberConnected => {
-        //   console.log('number of connected websockets:', numberConnected);
+          console.log('number of connected websockets:', numberConnected);
         });
 
         const messagesSubscription = messages.subscribe((message: string) => {
@@ -74,42 +77,46 @@ export class GraphComponent implements OnInit {
                         data.splice(0, 1);
                     }
             if (this.sockets instanceof Array) {
+                if (data !== []) {
                 if (this.sockets[1].length > 6) {
                     // tslint:disable-next-line:forin
                     for (const socket in this.sockets[1]) {
                         const jsondata = {
-                            timestamp: new Date(this.sockets[1][socket][0]).setMilliseconds(0),
+                            timestamp: new Date(this.sockets[1][socket][0]),
                             // open: this.sockets[1][socket][1],
                             // high: this.sockets[1][socket][3],
                             // low: this.sockets[1][socket][4],
                             // value: this.sockets[1][socket][2],
                             value: this.sockets[1][socket][5]
                         };
-                        if (jsondata.timestamp != null) {
-                            data.push(jsondata);
-                            this.myChart.update();
-                        }
 
+                            if (jsondata.timestamp !== null) {
+                                data.unshift(jsondata);
+                                this.myChart.update();
+                                this.mysource.postTickers(jsondata);
+                            }
+                        }
                         // this.tickers$ = data;
                         // localStorage.setItem('chartdata', JSON.stringify(data));
-                        this.mysource.postTickers(jsondata);
                     }
                   } else {
                     const jsondata = {
-                        timestamp: new Date(this.sockets[1][0]).setMilliseconds(0),
+                        timestamp: new Date(this.sockets[1][0]),
                         // open: this.sockets[1][1],
                         // high: this.sockets[1][3],
                         // low: this.sockets[1][4],
                         // value: this.sockets[1][2],
                         value: this.sockets[1][5]
                     };
-                    if (jsondata.timestamp != null) {
+                    if (jsondata.timestamp !== null) {
                         data.push(jsondata);
+                        console.log(JSON.stringify(jsondata.timestamp));
+                        this.myChart.update();
+                        this.mysource.postTickers(jsondata);
                         this.myChart.update();
                     }
                     // localStorage.setItem('chartdata', JSON.stringify(data));
-                    this.mysource.postTickers(jsondata);
-                    this.myChart.update();
+
                   }
             }
         });
@@ -143,7 +150,7 @@ export class GraphComponent implements OnInit {
         formatFunction: (value: any) => {
             return jqx.dataFormat.formatdate(value, 'hh:mm:ss', 'en-us');
         },
-        gridLines: { interval: 2 },
+        gridLines: { interval: 10 },
         valuesOnTicks: true,
         labels: { offset: { x: -17, y: 0 } }
     };
@@ -151,8 +158,8 @@ export class GraphComponent implements OnInit {
     valueAxis: any =
     {
         minValue: 0,
-        maxValue: 1000,
-        title: { text: 'Index Value' },
+        maxValue: 100,
+        title: { text: 'Volume' },
         labels: { horizontalAlignment: 'right' }
     };
     // tslint:disable-next-line:member-ordering
@@ -165,12 +172,12 @@ export class GraphComponent implements OnInit {
             valueAxis:
             {
                 minValue: 0,
-                maxValue: 1000,
+                maxValue: 100,
                 title: { text: 'Index Value' }
             },
             series: [
                 // tslint:disable-next-line:max-line-length
-                { dataField: 'value', displayText: 'value', opacity: 1, lineWidth: 2, symbolType: 'circle', fillColorSymbolSelected: 'white', symbolSize: 4 }
+                { dataField: 'value', displayText: 'Time', opacity: 1, lineWidth: 2, symbolType: 'circle', fillColorSymbolSelected: 'white', symbolSize: 4 }
             ]
         }
     ];
@@ -192,6 +199,13 @@ export class GraphComponent implements OnInit {
             this.myChart.update();
         }
     }
+    sortByProperty(property: any) {
+            return function (x, y) {
+
+                return ((x[property] === y[property]) ? 0 : ((x[property] > y[property]) ? 1 : -1));
+
+            };
+        }
     generateChartData = () => {
         // const max = 800;
         // const timestamp = new Date();
@@ -200,26 +214,30 @@ export class GraphComponent implements OnInit {
         //     timestamp.setSeconds(timestamp.getSeconds() - 1);
         //     this.data.push({ timestamp: new Date(timestamp.valueOf()), value: Math.max(100, (Math.random() * 1000) % max) });
         // }
-        // console.log('data  ', this.data);
+        // console.log(JSON.stringify({ timestamp: new Date(timestamp.valueOf()), value: Math.max(100, (Math.random() * 1000) % max) }));
         // this.data = this.data.reverse();
         // localStorage.setItem('chartdata', null);
         this.mysource.getTickers().subscribe(
             (savedDatas: BitfinexCandles) => {
+                let count = 0;
                 // tslint:disable-next-line:forin
                 for (const savedData in savedDatas) {
-                    if (savedDatas[savedData].timestamp != null) {
-                        this.data.push(savedDatas[savedData]);
+                    if ( count > 240) {
+                        break;
+                    } else if (savedDatas[savedData].timestamp !== null && count < 240) {
+                        this.data.unshift(savedDatas[savedData]);
+                        count += 1;
                     }
-                    // if (Object.keys(savedDatas[savedData]).length > 6) {
-
-                console.log('data  ', savedDatas[savedData]);
-                    // }
                 }
-
+                if (this.data.length >= 60) {
+                    this.data.splice(0, 1);
+                }
+                alert('data' + this.data.length);
+                this.data = this.data.reverse();
             });
-            console.log('data  ', this.data);
-            this.data = this.data.reverse();
     }
+
+
   // tslint:disable-next-line:member-ordering
 
 }

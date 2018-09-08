@@ -26,13 +26,11 @@ uri = 'http://localhost:4000/bitfinexRoutes';
     constructor(private http: HttpClient) {}
   getTickers() {
     const check = this.http.get(this.uri);
-    console.log('pulled data', check);
     return check;
   }
 
 
   postTickers(tickers) {
-    console.log('tickers check', tickers);
     return this.http.post(this.uri + '/add', tickers)
     .subscribe(res => console.log('Done'));
   }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { DataService } from '../data.service';
 import { Observable } from 'rxjs';
 import { trigger, style, transition, animate, keyframes, query, stagger } from '@angular/animations';
@@ -35,16 +35,33 @@ import { trigger, style, transition, animate, keyframes, query, stagger } from '
   ]
 })
 export class DashboardComponent implements OnInit {
-
+  color  = 'red';
   values: number[] = [102, 115, 130, 137];
   tickers$: Object;
+  colour$: Object;
   constructor(private data: DataService) { }
 
   ngOnInit() {
+    this.colour$ = 'off';
     this.data.getTickers().subscribe(
         data => this.tickers$ = data
     );
     console.log(this.data);
+  }
+  // tslint:disable-next-line:use-life-cycle-interface
+  ngAfterViewInit(): void {
+    const timer = setInterval(() => {
+      if (navigator.onLine) {
+        this.color = 'green';
+        this.colour$ = 'on';
+        // Has connection, go do something
+      } else {
+        this.color = 'red';
+        this.colour$ = 'off';
+      }
+
+
+      }, 1000);
   }
 
 }

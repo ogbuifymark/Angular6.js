@@ -9,7 +9,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { HttpClientModule } from '@angular/common/http';
 import { Http, HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-// import { jqxBarGaugeComponent } from 'jqwidgets-scripts/jqwidgets-ts/angular_jqxbargauge';
+import { jqxDropDownListComponent } from 'jqwidgets-scripts/jqwidgets-ts/angular_jqxdropdownlist';
 import { jqxChartComponent } from 'jqwidgets-scripts/jqwidgets-ts/angular_jqxchart';
 import { GraphComponent } from './graph/graph.component';
 import { SigninComponent } from './signin/signin.component';
@@ -48,6 +48,7 @@ export function getAuthServiceConfigs() {
     DashboardComponent,
     // jqxBarGaugeComponent,
     jqxChartComponent,
+    jqxDropDownListComponent,
     GraphComponent,
     SigninComponent,
   ],
