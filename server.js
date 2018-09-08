@@ -24,7 +24,7 @@ mongoose.Promise = global.Promise;
 mongoose.connect(dbConfig.url, {
     useNewUrlParser: true
 }).then(() => {
-    console.log("Successfully connected to the database");    
+    console.log("Successfully connected to the database");
 }).catch(err => {
     console.log('Could not connect to the database. Exiting now...');
     process.exit();
@@ -38,8 +38,10 @@ app.use('/bitfinexRoutes', bitfinexRoutes);
 
 
 //deploying app
-app.use(express.static(path.join(__dirname + 'dist/bezop-proj')))
-app.get('*', (req, res)=> {
+// app.use(express.static(path.join(__dirname + 'node_modules')))
+app.use('/node_modules', express.static('node_modules'));
+app.use('', express.static('dist/bezop-proj'));
+app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'dist/bezop-proj/index.html'))
 })
 const port = process.env.PORT || '4000'
