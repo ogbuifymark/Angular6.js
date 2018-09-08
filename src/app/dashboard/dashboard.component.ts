@@ -43,10 +43,10 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     this.colour$ = 'off';
-    this.data.getTickers().subscribe(
-        data => this.tickers$ = data
-    );
-    console.log(this.data);
+    // this.data.getTickers().subscribe(
+    //     data => this.tickers$ = data
+    // );
+    // console.log(this.data);
   }
   // tslint:disable-next-line:use-life-cycle-interface
   ngAfterViewInit(): void {
