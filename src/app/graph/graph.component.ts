@@ -158,7 +158,7 @@ export class GraphComponent implements OnInit {
     valueAxis: any =
     {
         minValue: 0,
-        maxValue: 100,
+        maxValue: 150,
         title: { text: 'Volume' },
         labels: { horizontalAlignment: 'right' }
     };
@@ -172,7 +172,7 @@ export class GraphComponent implements OnInit {
             valueAxis:
             {
                 minValue: 0,
-                maxValue: 100,
+                maxValue: 150,
                 title: { text: 'Index Value' }
             },
             series: [
@@ -222,9 +222,9 @@ export class GraphComponent implements OnInit {
                 let count = 0;
                 // tslint:disable-next-line:forin
                 for (const savedData in savedDatas) {
-                    if ( count > 240) {
+                    if ( count > 60) {
                         break;
-                    } else if (savedDatas[savedData].timestamp !== null && count < 240) {
+                    } else if (savedDatas[savedData].timestamp !== null && count < 60) {
                         this.data.unshift(savedDatas[savedData]);
                         count += 1;
                     }
@@ -232,7 +232,6 @@ export class GraphComponent implements OnInit {
                 if (this.data.length >= 60) {
                     this.data.splice(0, 1);
                 }
-                alert('data' + this.data.length);
                 this.data = this.data.reverse();
             });
     }
