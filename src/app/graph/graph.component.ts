@@ -232,6 +232,10 @@ export class GraphComponent implements OnInit {
                 if (this.data.length >= 60) {
                     this.data.splice(0, 1);
                 }
+<<<<<<< HEAD
+=======
+                // alert('data' + this.data.length);
+>>>>>>> a2923b44143545d361a3a96cc76d5bb8f734a030
                 this.data = this.data.reverse();
             });
     }
