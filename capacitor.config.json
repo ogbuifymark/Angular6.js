@@ -1,0 +1,6 @@
+{
+  "appId": "com.ogbuifymark.bezop",
+  "appName": "bezop-proj",
+  "bundledWebRuntime": false,
+  "webDir": "www"
+}
